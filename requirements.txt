@@ -1,0 +1,6 @@
+scikit-learn
+joblib
+streamlit
+plotly
+sklearn_crfsuite
+openpyxl
