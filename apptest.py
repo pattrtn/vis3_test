@@ -73,6 +73,8 @@ postal_code = ""
 if district and subdistrict and province:
     postal_code = postal_code_mapping.get((subdistrict, district, province), "")
 
+st.text_input("รหัสไปรษณีย์ (Postal Code):", value=postal_code, disabled=True)  # Display postal code as a read-only field
+
 # Load data for mapping
 geo_data_path = './output.csv'
 geo_data = pd.read_csv(geo_data_path, encoding='utf-8')
