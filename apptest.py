@@ -169,13 +169,3 @@ if st.button("Run"):
     else:
         st.write("No matching geographic data found.")
 
-    # Visualization of predictions with color-coding
-    st.subheader("Entity Visualization")
-    for token, entity in results:
-        color = (
-            "#FFCCCB" if entity == "LOC" else  # Locations are highlighted in light red
-            "#D3D3D3" if entity == "POST" else  # Postal codes are highlighted in grey
-            "#ADD8E6" if entity == "ADDR" else  # Address elements are highlighted in light blue
-            "#90EE90"  # All other tokens are highlighted in light green
-        )
-        st.markdown(f"<span style='background-color:{color}'>{token} ({entity})</span>", unsafe_allow_html=True)  # Inline styling for visualization
