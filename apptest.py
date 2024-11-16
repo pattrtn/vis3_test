@@ -61,16 +61,17 @@ def tokens_to_features(tokens, i):
 
     return features
 
-# Load data for dropdowns
-# Reads data from the provided Excel file to populate dropdown options for districts, subdistricts, and provinces.
-file_path = './thaidata.xlsx'
-data = pd.read_excel(file_path, sheet_name='db')
-tambon_options = [""] + data['TambonThaiShort'].dropna().unique().tolist()  # Subdistrict options with default
-district_options = [""] + data['DistrictThaiShort'].dropna().unique().tolist()  # District options with default
-province_options = [""] + data['ProvinceThai'].dropna().unique().tolist()  # Province options with default
+# Input fields for address components
+name = st.text_input("ชื่อ (Name):")  # Name field
+address = st.text_input("ที่อยู่ (Address):")  # Address field
+subdistrict = st.selectbox("ตำบล/แขวง (Sub-district):", options=tambon_options)  # Dropdown for subdistricts
+district = st.selectbox("อำเภอ/เขต (District):", options=district_options)  # Dropdown for districts
+province = st.selectbox("จังหวัด (Province):", options=province_options)  # Dropdown for provinces
 
-# Map postal codes to district, subdistrict, and province
-postal_code_mapping = data.set_index(['TambonThaiShort', 'DistrictThaiShort', 'ProvinceThai'])['PostCodeMain'].to_dict()
+# Automatically determine postal code based on district, subdistrict, and province
+postal_code = ""
+if district and subdistrict and province:
+    postal_code = postal_code_mapping.get((subdistrict, district, province), "")
 
 # Load data for mapping
 geo_data_path = './output.csv'
