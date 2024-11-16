@@ -96,19 +96,21 @@ model_file_path = './model.joblib'
 model = load_model(model_file_path)  # Load the model
 st.success("Model loaded successfully!")
 
-# Input fields for address components
-name = st.text_input("ชื่อ (Name):")  # Name field
-address = st.text_input("ที่อยู่ (Address):")  # Address field
-subdistrict = st.selectbox("ตำบล (Sub-district):", options=tambon_options)  # Dropdown for subdistricts
-district = st.selectbox("อำเภอ (District):", options=district_options)  # Dropdown for districts
-province = st.selectbox("จังหวัด (Province):", options=province_options)  # Dropdown for provinces
+# เลือกเขต/อำเภอ โดยกรองจากแขวง/ตำบลที่เลือกและมีตัวเลือกเริ่มต้นเป็นช่องว่าง
+district_options = sorted(data[data["TambonThaiShort"] == sub_district]["DistrictThaiShort"].unique()) if sub_district else []
+district = st.selectbox("เลือกเขต/อำเภอ (District)", options=[""] + district_options)
 
-# Automatically determine postal code based on district, subdistrict, and province
-postal_code = ""
-if district and subdistrict and province:
-    postal_code = postal_code_mapping.get((subdistrict, district, province), "")
+# เลือกจังหวัด โดยกรองจากเขต/อำเภอและแขวง/ตำบลที่เลือกและมีตัวเลือกเริ่มต้นเป็นช่องว่าง
+province_options = sorted(data[(data["TambonThaiShort"] == sub_district) & (data["DistrictThaiShort"] == district)]["ProvinceThai"].unique()) if district else []
+province = st.selectbox("เลือกจังหวัด (Province)", options=[""] + province_options)
 
-st.text_input("รหัสไปรษณีย์ (Postal Code):", value=postal_code, disabled=True)  # Display postal code as a read-only field
+# รหัสไปรษณีย์โดยอัตโนมัติจากแขวง/ตำบล, เขต/อำเภอ และจังหวัดที่เลือก
+postal_codes = data[(data["ProvinceThai"] == province) & 
+                    (data["DistrictThaiShort"] == district) & 
+                    (data["TambonThaiShort"] == sub_district)]["PostCodeMain"].unique()
+postal_code = postal_codes[0] if postal_codes.size > 0 else "ไม่พบรหัสไปรษณีย์"
+
+st.write("รหัสไปรษณีย์ (Postal Code):", postal_code)
 
 # Run button
 if st.button("Run"):
