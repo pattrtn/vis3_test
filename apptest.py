@@ -176,7 +176,7 @@ if st.button("Run"):
     # st.write("**Filtered Data:**")
     # st.dataframe(mapped_data)
 
-    # Plot locations on Thailand map using Leaflet
+ # Plot locations on Thailand map using Leaflet
     if not mapped_data.empty:
         st.subheader("Location Visualization on Thailand Map")
         # Center map based on the average latitude and longitude of the mapped data
@@ -192,33 +192,38 @@ if st.button("Run"):
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(thailand_map)
 
+        # Render the map in Streamlit
+        folium_static(thailand_map)
+    else:
+        st.write("No matching geographic data found.")
+
         # Render the map in Streamli
 
 
-        # # Load the province coordinates data (ensure the file path is correct)
-        # province_data_path = './province_full_coordinates_thai.csv'
-        # province_data = pd.read_csv(province_data_path)
+        # Load the province coordinates data (ensure the file path is correct)
+        province_data_path = './province_full_coordinates_thai.csv'
+        province_data = pd.read_csv(province_data_path)
     
-        # # Streamlit app setup
-        # st.title("Thailand Province Map with Hover Effects")
-        # st.markdown(
-        #     """This map displays the provinces of Thailand. Hover over the markers to see the province names.""")
+        # Streamlit app setup
+        st.title("Thailand Province Map with Hover Effects")
+        st.markdown(
+            """This map displays the provinces of Thailand. Hover over the markers to see the province names.""")
 
-        # # Create a Folium map centered in Thailand
-        # thailand_map = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
+        # Create a Folium map centered in Thailand
+        thailand_map = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
 
-        # # Iterate through the province data and add markers with hover text
-        # for _, row in province_data.iterrows():
-        #     lat = row['Latitude']
-        #     lon = row['Longitude']
-        #     province_name = row['Province']
+        # Iterate through the province data and add markers with hover text
+        for _, row in province_data.iterrows():
+            lat = row['Latitude']
+            lon = row['Longitude']
+            province_name = row['Province']
     
-        # # Add a marker for each province with a hover tooltip
-        # folium.Marker(
-        #     location=[lat, lon],
-        #     popup=province_name,  # Show the province name in a popup
-        #     tooltip=province_name,  # Show the province name when hovering over the marker
-        #     icon=folium.Icon(color='blue', icon='info-sign')).add_to(thailand_map)
+        # Add a marker for each province with a hover tooltip
+        folium.Marker(
+            location=[lat, lon],
+            popup=province_name,  # Show the province name in a popup
+            tooltip=province_name,  # Show the province name when hovering over the marker
+            icon=folium.Icon(color='blue', icon='info-sign')).add_to(thailand_map)
 
-        # # Render the map in Streamlit
-        # folium_static(thailand_map)
+        # Render the map in Streamlit
+        folium_static(thailand_map)
