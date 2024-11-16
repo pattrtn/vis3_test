@@ -4,4 +4,8 @@ streamlit
 plotly
 sklearn_crfsuite
 openpyxl
-geopy
+geopandas
+matplotlib
+basemap
+folium
+streamlit_folium
