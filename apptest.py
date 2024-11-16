@@ -162,17 +162,17 @@ if st.button("Run"):
     # Display match percentage
     st.metric(label="Validation Accuracy", value=f"{match_percentage:.2f}%")
 
-    # Filter data based on mapping by district, subdistrict, province, and postal code
-    mapped_data = geo_data[
-        (geo_data["subdistrict"] == subdistrict) &
-        (geo_data["district"] == district) &
-        (geo_data["province"] == province) &
-        (geo_data["zipcode"] == postal_code)
-    ]
+    # # Filter data based on mapping by district, subdistrict, province, and postal code
+    # mapped_data = geo_data[
+    #     (geo_data["subdistrict"] == subdistrict) &
+    #     (geo_data["district"] == district) &
+    #     (geo_data["province"] == province) &
+    #     (geo_data["zipcode"] == postal_code)
+    # ]
 
-    # Display filtered data
-    st.write("**Filtered Data:**")
-    st.dataframe(mapped_data)
+    # # Display filtered data
+    # st.write("**Filtered Data:**")
+    # st.dataframe(mapped_data)
 
     # Plot locations on Thailand map using Leaflet
     if not mapped_data.empty:
