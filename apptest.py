@@ -200,31 +200,29 @@ if st.button("Run"):
         # Render the map in Streamli
 
 
-# Load the province coordinates data (ensure the file path is correct)
-province_data_path = './province_full_coordinates_thai.csv'
-province_data = pd.read_csv(province_data_path)
+        # Load the province coordinates data (ensure the file path is correct)
+        province_data_path = './province_full_coordinates_thai.csv'
+        province_data = pd.read_csv(province_data_path)
 
-# Streamlit app setup for Thailand Province Map
-st.title("Thailand Province Map with Hover Effects")
-st.markdown(
-    """This map displays the provinces of Thailand. Hover over the markers to see the province names.""")
+        # Streamlit app setup for Thailand Province Map
+        st.title("Thailand Province Map with Hover Effects")
+        st.markdown("""This map displays the provinces of Thailand. Hover over the markers to see the province names.""")
 
-# Create a Folium map centered in Thailand
-thailand_map2 = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
+        # Create a Folium map centered in Thailand
+        thailand_map2 = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
 
-# Iterate through the province data and add markers with hover text
-for _, row in province_data.iterrows():
-    lat = row['Latitude']
-    lon = row['Longitude']
-    province_name = row['Province']
+        # Iterate through the province data and add markers with hover text
+        for _, row in province_data.iterrows():
+            lat = row['Latitude']
+            lon = row['Longitude']
+            province_name = row['Province']
     
-    # Add a marker for each province with a hover tooltip
-    folium.Marker(
-        location=[lat, lon],
-        popup=province_name,  # Show the province name in a popup when clicked
-        tooltip=province_name,  # Show the province name when hovering over the marker
-        icon=folium.Icon(color='blue', icon='info-sign')
-    ).add_to(thailand_map2)
+        # Add a marker for each province with a hover tooltip
+        folium.Marker(
+            location=[lat, lon],
+            popup=province_name,  # Show the province name in a popup when clicked
+            tooltip=province_name,  # Show the province name when hovering over the marker
+            icon=folium.Icon(color='blue', icon='info-sign')).add_to(thailand_map2)
 
-# Render the map in Streamlit
-folium_static(thailand_map2)
+        # Render the map in Streamlit
+        folium_static(thailand_map2)
