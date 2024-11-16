@@ -210,7 +210,7 @@ if st.button("Run"):
             """This map displays the provinces of Thailand. Hover over the markers to see the province names.""")
 
         # Create a Folium map centered in Thailand
-        thailand_map = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
+        thailand_map2 = folium.Map(location=[15.8700, 100.9925], zoom_start=6)  # Approximate center of Thailand
 
         # Iterate through the province data and add markers with hover text
         for _, row in province_data.iterrows():
@@ -223,7 +223,7 @@ if st.button("Run"):
             location=[lat, lon],
             popup=province_name,  # Show the province name in a popup
             tooltip=province_name,  # Show the province name when hovering over the marker
-            icon=folium.Icon(color='blue', icon='info-sign')).add_to(thailand_map)
+            icon=folium.Icon(color='blue', icon='info-sign')).add_to(thailand_map2)
 
         # Render the map in Streamlit
-        folium_static(thailand_map)
+        folium_static(thailand_map2)
