@@ -61,19 +61,16 @@ def tokens_to_features(tokens, i):
 
     return features
 
-# Input fields for address components
-name = st.text_input("ชื่อ (Name):")  # Name field
-address = st.text_input("ที่อยู่ (Address):")  # Address field
-subdistrict = st.selectbox("ตำบล/แขวง (Sub-district):", options=tambon_options)  # Dropdown for subdistricts
-district = st.selectbox("อำเภอ/เขต (District):", options=district_options)  # Dropdown for districts
-province = st.selectbox("จังหวัด (Province):", options=province_options)  # Dropdown for provinces
+# Load data for dropdowns
+# Reads data from the provided Excel file to populate dropdown options for districts, subdistricts, and provinces.
+file_path = './thaidata.xlsx'
+data = pd.read_excel(file_path, sheet_name='db')
+tambon_options = [""] + data['TambonThaiShort'].dropna().unique().tolist()  # Subdistrict options with default
+district_options = [""] + data['DistrictThaiShort'].dropna().unique().tolist()  # District options with default
+province_options = [""] + data['ProvinceThai'].dropna().unique().tolist()  # Province options with default
 
-# Automatically determine postal code based on district, subdistrict, and province
-postal_code = ""
-if district and subdistrict and province:
-    postal_code = postal_code_mapping.get((subdistrict, district, province), "")
-
-st.text_input("รหัสไปรษณีย์ (Postal Code):", value=postal_code, disabled=True)  # Display postal code as a read-only field
+# Map postal codes to district, subdistrict, and province
+postal_code_mapping = data.set_index(['TambonThaiShort', 'DistrictThaiShort', 'ProvinceThai'])['PostCodeMain'].to_dict()
 
 # Load data for mapping
 geo_data_path = './output.csv'
@@ -99,21 +96,19 @@ model_file_path = './model.joblib'
 model = load_model(model_file_path)  # Load the model
 st.success("Model loaded successfully!")
 
-# เลือกเขต/อำเภอ โดยกรองจากแขวง/ตำบลที่เลือกและมีตัวเลือกเริ่มต้นเป็นช่องว่าง
-district_options = sorted(data[data["TambonThaiShort"] == sub_district]["DistrictThaiShort"].unique()) if sub_district else []
-district = st.selectbox("เลือกเขต/อำเภอ (District)", options=[""] + district_options)
+# Input fields for address components
+name = st.text_input("ชื่อ (Name):")  # Name field
+address = st.text_input("ที่อยู่ (Address):")  # Address field
+subdistrict = st.selectbox("ตำบล/แขวง (Sub-district):", options=tambon_options)  # Dropdown for subdistricts
+district = st.selectbox("อำเภอ/เขต (District):", options=district_options)  # Dropdown for districts
+province = st.selectbox("จังหวัด (Province):", options=province_options)  # Dropdown for provinces
 
-# เลือกจังหวัด โดยกรองจากเขต/อำเภอและแขวง/ตำบลที่เลือกและมีตัวเลือกเริ่มต้นเป็นช่องว่าง
-province_options = sorted(data[(data["TambonThaiShort"] == sub_district) & (data["DistrictThaiShort"] == district)]["ProvinceThai"].unique()) if district else []
-province = st.selectbox("เลือกจังหวัด (Province)", options=[""] + province_options)
+# Automatically determine postal code based on district, subdistrict, and province
+postal_code = ""
+if district and subdistrict and province:
+    postal_code = postal_code_mapping.get((subdistrict, district, province), "")
 
-# รหัสไปรษณีย์โดยอัตโนมัติจากแขวง/ตำบล, เขต/อำเภอ และจังหวัดที่เลือก
-postal_codes = data[(data["ProvinceThai"] == province) & 
-                    (data["DistrictThaiShort"] == district) & 
-                    (data["TambonThaiShort"] == sub_district)]["PostCodeMain"].unique()
-postal_code = postal_codes[0] if postal_codes.size > 0 else "ไม่พบรหัสไปรษณีย์"
-
-st.write("รหัสไปรษณีย์ (Postal Code):", postal_code)
+st.text_input("รหัสไปรษณีย์ (Postal Code):", value=postal_code, disabled=True)  # Display postal code as a read-only field
 
 # Run button
 if st.button("Run"):
@@ -173,4 +168,3 @@ if st.button("Run"):
         folium_static(thailand_map)
     else:
         st.write("No matching geographic data found.")
-
