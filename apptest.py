@@ -136,12 +136,15 @@ if st.button("Run"):
     # Display match percentage
     st.metric(label="Validation Accuracy", value=f"{match_percentage:.2f}%")
 
+    # Remove commas from the 'zipcode' column before filtering
+    geo_data["zipcode"] = geo_data["zipcode"].str.replace(",", "", regex=False)
+
     # Filter data based on mapping by district, subdistrict, province, and postal code
     mapped_data = geo_data[
-        (geo_data["subdistrict"] == subdistrict) &
-        (geo_data["district"] == district) &
-        (geo_data["province"] == province) &
-        (geo_data["zipcode"] == postal_code)
+    (geo_data["subdistrict"] == subdistrict) &
+    (geo_data["district"] == district) &
+    (geo_data["province"] == province) &
+    (geo_data["zipcode"] == postal_code)
     ]
 
     # Display filtered data
