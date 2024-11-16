@@ -1,0 +1,11 @@
+scikit-learn
+joblib
+streamlit
+plotly
+sklearn_crfsuite
+openpyxl
+geopandas
+matplotlib
+basemap
+folium
+streamlit_folium
