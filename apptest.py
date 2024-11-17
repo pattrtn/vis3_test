@@ -87,11 +87,10 @@ geo_data = geo_data.merge(
 )
 
 # Streamlit app setup
-st.title("NER Model Visualization")
+st.title("Named Entity Recognition (NER)")
 st.markdown("[Open Live Demo](https://vis3hover-am9wyq7bpg6kvgtjuaaoyw.streamlit.app/) for this visualization!")
 st.markdown(
-    """This app allows you to visualize and interact with a Named Entity Recognition (NER) model
-    trained for address extraction. Input the required fields and run the model to see predictions."""
+    """The model is a simple CRF that takes a string and tags each token as LOC (tambon, amphoe, or province), POST (postal code), ADDR (other address element), or O (the rest)."""
 )
 
 # Load the CRF model from a predefined file path
@@ -99,19 +98,6 @@ model_file_path = './model.joblib'
 model = load_model(model_file_path)  # Load the model
 st.success("Model loaded successfully!")
 
-# # Input fields for address components
-# name = st.text_input("ชื่อ (Name):")  # Name field
-# address = st.text_input("ที่อยู่ (Address):")  # Address field
-# subdistrict = st.selectbox("ตำบล/แขวง (Sub-district):", options=tambon_options)  # Dropdown for subdistricts
-# district = st.selectbox("อำเภอ/เขต (District):", options=district_options)  # Dropdown for districts
-# province = st.selectbox("จังหวัด (Province):", options=province_options)  # Dropdown for provinces
-
-# # Automatically determine postal code based on district, subdistrict, and province
-# postal_code = ""
-# if district and subdistrict and province:
-#     postal_code = postal_code_mapping.get((subdistrict, district, province), "")
-
-# st.text_input("รหัสไปรษณีย์ (Postal Code):", value=postal_code, disabled=True)  # Display postal code as a read-only field
 
 # รับข้อมูลจากผู้ใช้
 name = st.text_input("ชื่อ (Name)")
@@ -149,14 +135,14 @@ if st.button("Run"):
 
     # Display prediction results in a table
     st.subheader("Prediction Results")
-    result_df = pd.DataFrame(results, columns=["Token", "Entity"])
+    result_df = pd.DataFrame(results, columns=["Token", "Prediction"])
 
-    # Add validation column with expected answers
+    # Add expectation column with expected answers
     expected_answers = ["O", "O"] + ["ADDR"] * (len(result_df) - 6) + ["LOC", "LOC", "LOC", "POST"]
-    result_df["Validation"] = expected_answers[:len(result_df)]
+    result_df["Expectation"] = expected_answers[:len(result_df)]
 
-    # Calculate percentage of matches between Entity and Validation
-    result_df["Match"] = result_df["Entity"] == result_df["Validation"]
+    # Calculate percentage of matches between Prediction and Expectation
+    result_df["Match"] = result_df["Prediction"] == result_df["Expectation"]
     match_percentage = (result_df["Match"].sum() / len(result_df)) * 100
 
     # Display results
@@ -164,6 +150,7 @@ if st.button("Run"):
 
     # Display match percentage
     st.metric(label="Validation Accuracy", value=f"{match_percentage:.2f}%")
+
 
     # Filter data based on mapping by district, subdistrict, province, and postal code
     mapped_data = geo_data[
